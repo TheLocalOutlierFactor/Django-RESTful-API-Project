@@ -3,19 +3,25 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User
-from .models import Product, Order
-from .serializers import UserSerializer, ProductSerializer, OrderSerializer
+from .models import Category, Product, Order
+from .serializers import UserSerializer, CategorySerializer, ProductSerializer, OrderSerializer
 from .permissions import ReadOnly
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+class CategoryListView(generics.ListCreateAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+    permission_classes = [IsAdminUser | ReadOnly]
+
 class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-    permission_classes = [IsAdminUser|ReadOnly]
+    permission_classes = [IsAdminUser | ReadOnly]
 
 class OrderListView(generics.ListCreateAPIView):
     queryset = Order.objects.all()
