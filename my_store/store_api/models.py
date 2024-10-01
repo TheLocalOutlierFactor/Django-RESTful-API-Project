@@ -8,6 +8,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = 'Categories'
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
@@ -25,4 +28,4 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Order {self.id} by {self.user.username}"
+        return f'Order {self.id} by {self.user.username}'
