@@ -5,5 +5,5 @@ from django.contrib.auth.models import User, Group
 @receiver(post_save, sender=User)
 def assign_default_group(sender, instance, created, **kwargs):
     if created:
-        default_group, _ = Group.objects.get_or_create(name='Default User')
+        default_group, _ = Group.objects.get_or_create(name='Default Users')
         instance.groups.add(default_group)
