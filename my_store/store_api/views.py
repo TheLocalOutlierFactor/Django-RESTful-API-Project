@@ -2,35 +2,45 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.models import User
 
-from .models import Category, Product, Order
-from .serializers import UserSerializer, CategorySerializer, ProductSerializer, OrderSerializer
+from . import models
+from . import serializers
 from .permissions import ReadOnly
 
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = serializers.UserSerializer
 
 
 class CategoryListView(generics.ListCreateAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    queryset = models.Category.objects.all()
+    serializer_class = serializers.CategorySerializer
 
     permission_classes = [IsAdminUser | ReadOnly]
 
 
 class ProductListView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    queryset = models.Product.objects.all()
+    serializer_class = serializers.ProductSerializer
 
     permission_classes = [IsAdminUser | ReadOnly]
 
 
+class ReviewListView(generics.ListCreateAPIView):
+    queryset = models.Review.objects.all()
+    serializer_class = serializers.ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
 class OrderListView(generics.ListCreateAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    queryset = models.Order.objects.all()
+    serializer_class = serializers.OrderSerializer
 
     permission_classes = [IsAuthenticated]
 
@@ -39,8 +49,8 @@ class OrderListView(generics.ListCreateAPIView):
 
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
+    queryset = models.Order.objects.all()
+    serializer_class = serializers.OrderSerializer
 
     permission_classes = [IsAuthenticated]
 

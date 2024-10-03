@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from .models import Product, Category
+from . import models
 
 
 class ProductCategoryInline(admin.TabularInline):
-    model = Product.categories.through
+    model = models.Product.categories.through
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -22,5 +22,5 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name']
     exclude = ['categories']
 
-admin.site.register(Category, CategoryAdmin)
-admin.site.register(Product, ProductAdmin)
+admin.site.register(models.Category, CategoryAdmin)
+admin.site.register(models.Product, ProductAdmin)

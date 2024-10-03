@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from .models import Category, Product, Order
+from . import models
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,17 +20,23 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Category
+        model = models.Category
         fields = '__all__'
+
 
 class ProductSerializer(serializers.ModelSerializer):
     categories = CategorySerializer(many=True, read_only=True)
-
     class Meta:
-        model = Product
+        model = models.Product
+        fields = '__all__'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Review
         fields = '__all__'
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Order
+        model = models.Order
         fields = '__all__'
