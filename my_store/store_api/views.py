@@ -10,6 +10,7 @@ from . import models
 from . import serializers
 from .permissions import ReadOnly
 
+# TODO: handle swagger page generation for methods that require auth
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
