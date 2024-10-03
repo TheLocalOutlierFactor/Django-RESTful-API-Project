@@ -1,4 +1,5 @@
-from rest_framework import generics
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -16,34 +17,37 @@ class RegisterView(generics.CreateAPIView):
 
 
 class CategoryListView(generics.ListCreateAPIView):
+    permission_classes = [IsAdminUser | ReadOnly]
+
     queryset = models.Category.objects.all()
     serializer_class = serializers.CategorySerializer
 
-    permission_classes = [IsAdminUser | ReadOnly]
-
 
 class ProductListView(generics.ListCreateAPIView):
-    queryset = models.Product.objects.all()
-    serializer_class = serializers.ProductSerializer
-
     permission_classes = [IsAdminUser | ReadOnly]
+
+    queryset = models.Product.objects.get_queryset().order_by('id')
+    serializer_class = serializers.ProductSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['categories__name']
+    ordering_fields = ['price']
 
 
 class ReviewListView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewSerializer
-
-    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
 class OrderListView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderSerializer
-
-    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -53,10 +57,10 @@ class OrderListView(generics.ListCreateAPIView):
 
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
     queryset = models.Order.objects.all()
     serializer_class = serializers.OrderSerializer
-
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
