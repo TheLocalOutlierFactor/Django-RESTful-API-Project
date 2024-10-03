@@ -32,6 +32,7 @@ class ProductListView(generics.ListCreateAPIView):
 class ReviewListView(generics.ListCreateAPIView):
     queryset = models.Review.objects.all()
     serializer_class = serializers.ReviewSerializer
+
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -46,6 +47,9 @@ class OrderListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
 
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
