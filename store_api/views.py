@@ -3,7 +3,7 @@ from rest_framework import generics, filters
 
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.models import User
-from drf_spectacular.utils import extend_schema_view, extend_schema
+from drf_spectacular.utils import extend_schema
 
 from . import models
 from . import serializers
