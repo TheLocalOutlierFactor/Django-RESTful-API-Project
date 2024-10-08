@@ -31,6 +31,20 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CartItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CartItem
+        fields = ['id', 'product', 'quantity']
+
+
+class CartSerializer(serializers.ModelSerializer):
+    items = CartItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = models.Cart
+        fields = ['id', 'user', 'items']
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Review

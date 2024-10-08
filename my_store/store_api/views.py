@@ -40,6 +40,28 @@ class ProductListView(generics.ListCreateAPIView):
     ordering_fields = ['price']
 
 
+@extend_schema(tags=['Cart'])
+class CartView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    serializer_class = serializers.CartSerializer
+
+    def get_object(self):
+        cart, created = models.Cart.objects.get_or_create(user=self.request.user)
+        return cart
+
+
+@extend_schema(tags=['Cart'])
+class AddToCartView(generics.CreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    serializer_class = serializers.CartItemSerializer
+
+    def perform_create(self, serializer):
+        cart, created = models.Cart.objects.get_or_create(user=self.request.user)
+        serializer.save(cart=cart)
+
+
 @extend_schema(tags=['Product Reviews'])
 class ReviewListView(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
