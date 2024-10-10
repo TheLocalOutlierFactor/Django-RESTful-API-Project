@@ -70,7 +70,10 @@ class ReviewListView(generics.ListCreateAPIView):
     serializer_class = serializers.ReviewSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user)
+        else:
+            serializer.save(user=None)
 
 
 @extend_schema(tags=['Orders'])

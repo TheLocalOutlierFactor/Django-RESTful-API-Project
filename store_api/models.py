@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
 
 
 class Category(models.Model):
@@ -54,7 +55,7 @@ class CartItem(models.Model):
 
 class Review(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews')
-    user = models.ForeignKey(User, on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     rating = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
@@ -74,10 +75,24 @@ class Review(models.Model):
 
 
 class Order(models.Model):
+    class OrderStatus(models.TextChoices):
+        PENDING = 'PND', _('Pending')
+        PROCESSING = 'PRC', _('Processing')
+        SHIPPED = 'SHP', _('Shipped')
+        DELIVERED = 'DEL', _('Delivered')
+        CANCELLED = 'CNL', _('Cancelled')
+        RETURNED = 'RET', _('Returned')
+        REFUNDED = 'REF', _('Refunded')
+        FAILED = 'FLD', _('Failed')
+        ON_HOLD = 'HLD', _('On Hold')
+        PARTIALLY_SHIPPED = 'PSH', _('Partially Shipped')
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # TODO change to choice field instead of char field?
-    status = models.CharField(max_length=20, default='Pending')
+    status = models.CharField(
+        max_length=3,
+        choices=OrderStatus,
+        default=OrderStatus.PENDING,)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f'Order {self.id} by {self.user.username}'
+        return f'Order {self.id} by {self.user.username} with status {self.status}'

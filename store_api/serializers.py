@@ -1,17 +1,16 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 
 from . import models
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = models.User
         fields = ('id', 'username', 'password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        user = User.objects.create_user(
+        user = models.User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password']
         )
@@ -46,9 +45,15 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+
     class Meta:
         model = models.Review
-        fields = '__all__'
+        fields = ['product', 'user', 'rating', 'comment', 'created_at']
+
+    def get_user(self, obj):
+        return obj.user.username if obj.user else 'Anonymous User'
+
 
 class OrderSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
