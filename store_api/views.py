@@ -15,6 +15,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     pass
 
 
+@extend_schema(tags=['Tokens'])
+class CustomTokenRefreshView(TokenRefreshView):
+    pass
+
+
 @extend_schema(tags=['Registration'])
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -28,6 +33,14 @@ class CategoryListView(generics.ListCreateAPIView):
     queryset = models.Category.objects.all()
     serializer_class = serializers.CategorySerializer
 
+    # @extend_schema(
+    #     request=serializers.CategorySerializer,
+    #     responses={201: serializers.CategorySerializer},
+    #     description='Create a new category',
+    # )
+    # def post(self, request, *args, **kwargs):
+    #     return super().post(request, *args, **kwargs)
+
 
 @extend_schema(tags=['Products'])
 class ProductListView(generics.ListCreateAPIView):
@@ -38,6 +51,14 @@ class ProductListView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     filterset_fields = ['categories__name']
     ordering_fields = ['price']
+
+    # @extend_schema(
+    #     request=serializers.ProductSerializer,
+    #     responses={201: serializers.ProductSerializer},
+    #     description='Create a new product',
+    # )
+    # def post(self, request, *args, **kwargs):
+    #     return super().post(request, *args, **kwargs)
 
 
 @extend_schema(tags=['Cart'])
