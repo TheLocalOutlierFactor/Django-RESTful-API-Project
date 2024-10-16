@@ -23,4 +23,4 @@ Technologies that are currently implemented in this project:
 - Add unit tests
 - Add async support
 - Dockerize the app
-- Maybe more stuff ¯\_(ツ)_/¯
+- Maybe more stuff ¯\\\_(ツ)\_/¯
