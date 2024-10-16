@@ -5,9 +5,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema
 
-from . import models
-from . import serializers
-from . import permissions
+from . import models, serializers, permissions, tasks
 
 
 @extend_schema(tags=['Tokens'])
@@ -105,7 +103,8 @@ class OrderListView(generics.ListCreateAPIView):
     serializer_class = serializers.OrderSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        order = serializer.save(user=self.request.user)
+        tasks.send_confirmation_email.delay(self.request.user.username, order.id)
 
     def get_queryset(self):
         return self.queryset.filter(user=self.request.user)
